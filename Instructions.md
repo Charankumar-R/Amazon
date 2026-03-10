@@ -7,6 +7,7 @@
 - **BDD Framework:** Cucumber
 - **UI Automation:** Selenium WebDriver 4.18.1
 - **Design Pattern:** Page Object Model with PageFactory
+- **Data Driven Testing:** Apache POI for Excel interactions
 
 ## Project Structure
 ```text
@@ -14,7 +15,8 @@ amazon-bdd-framework/
  ├── pom.xml
  ├── src/test/java/
  │   ├── util/
- │   │   └── Base.java (WebDriver initialization, waits, teardown)
+ │   │   ├── Base.java (WebDriver initialization, waits, teardown)
+ │   │   └── ExcelReader.java (Apache POI Excel logic)
  │   ├── pages/
  │   │   ├── HomePage.java
  │   │   ├── CategoryPage.java
@@ -31,9 +33,4 @@ amazon-bdd-framework/
 ```
 
 ## Execution Instructions
-Navigate to the root directory `e:/hcl_sample/AmazonBDDFramework` and execute the following Maven command:
-
-```bash
-mvn clean test
-```
-Alternatively, you can run `TestRunner.java` directly from your IDE (IntelliJ / Eclipse) using the TestNG plugin. Reports will be generated in `/target/cucumber-reports/`.
+You can run `TestRunner.java` directly from your IDE (IntelliJ / Eclipse) using the TestNG plugin. Reports will be generated in `/target/cucumber-reports/`.
