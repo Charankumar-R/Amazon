@@ -9,9 +9,7 @@ import pages.HomePage;
 import pages.ProductPage;
 import pages.SubCategoryPage;
 import util.Base;
-import util.ExcelReader;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +20,6 @@ public class AmazonSteps {
     CategoryPage categoryPage;
     SubCategoryPage subCategoryPage;
     ProductPage productPage;
-    ExcelReader excelReader = new ExcelReader();
-
-    private List<Map<String, String>> testData;
 
     @Given("User launches browser and navigates to Amazon")
     public void user_launches_browser_and_navigates_to_amazon() {
@@ -36,43 +31,22 @@ public class AmazonSteps {
         homePage.navigateToAmazon();
     }
 
-    @When("User reads category data from Excel")
-    public void user_reads_category_data_from_excel() {
-        String projectPath = System.getProperty("user.dir");
-        String excelPath = projectPath + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testdata" + File.separator + "AmazonData.xlsx";
+    @When("User navigates to category {string} and subcategory {string}")
+    public void user_navigates_to_category_and_subcategory(String category, String subCategory) {
+        System.out.println("Navigating to Category: " + category + " -> " + subCategory);
         
-        // Ensure testdata exists or mock it if unavailable
-        File f = new File(excelPath);
-        if(f.exists()) {
-            excelReader.initExcel(excelPath);
-            testData = excelReader.getTestData("Categories");
-        } else {
-            System.out.println("Excel file not found at " + excelPath + ". Skipping read and using mock data in actual step if necessary.");
-            // In a real run, this throws if file missing. We are just architecting.
-        }
+        homePage.clickHamburgerMenu();
+        categoryPage.selectCategory(category);
+        subCategoryPage.selectSubCategory(subCategory);
     }
 
-    @When("User navigates to categories and subcategories")
-    public void user_navigates_to_categories_and_subcategories() {
-        if (testData != null && !testData.isEmpty()) {
-            for (Map<String, String> row : testData) {
-                String category = row.get("Category");
-                String subCategory = row.get("SubCategory");
-                
-                System.out.println("Navigating to Category: " + category + " -> " + subCategory);
-                
-                homePage.clickHamburgerMenu();
-                categoryPage.selectCategory(category);
-                subCategoryPage.selectSubCategory(subCategory);
-                
-                List<Map<String, String>> products = productPage.getProductListNamesAndPrices();
-                System.out.println("Products found for " + subCategory + ": " + products.size());
-                for (Map<String, String> prod : products) {
-                    System.out.println("Name: " + prod.get("Name") + ", Price: " + prod.get("Price"));
-                }
-            }
-        } else {
-            System.out.println("No Excel data found, skipping loop execution.");
+    @Then("Extract Name and Price for products in subcategory {string}")
+    public void extract_name_and_price_for_products_in_subcategory(String subCategory) {
+        List<Map<String, String>> products = productPage.getProductListNamesAndPrices();
+        System.out.println("Products found for " + subCategory + ": " + products.size());
+        for (Map<String, String> prod : products) {
+            System.out.println("Name: " + prod.get("Name") + ", Price: " + prod.get("Price"));
+            Assert.assertNotNull(prod.get("Name"), "Product Name should not be null");
         }
     }
 
